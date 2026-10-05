@@ -3,6 +3,18 @@ name: computer-use
 description: Operate Windows or macOS apps through local-computer MCP, selecting an exact target window and verifying each result. Can connect to an agent-owned VM desktop.
 ---
 
+Start each desktop task with `start_computer_use`. The MCP connection remains
+available while idle; only an active session displays the banner and changes the
+cursor. Do not reconnect the MCP server between tasks.
+
+Always finish with `end_computer_use`, including after verification failure,
+errors or abandoning an action. Do this **before returning to chat or switching
+to work that does not need the desktop**. Ending removes the banner/glow, restores
+the cursor, cancels the worker and discards its target. For a later authorized
+desktop task, call `start_computer_use` again, then list and bind a fresh target.
+`computer_session_status` reads lifecycle state without acquiring the desktop.
+Do not leave computer use active just because the conversation is continuing.
+
 1. Use desktop_diagnostics, computer_status, list_apps and list_windows. Identify
    the desktop you are controlling; a shared host has one real cursor. A dedicated
    VM has a separate desktop/cursor, but only claim isolation after validating it.
@@ -45,4 +57,12 @@ an unavoidable check/dispatch race and do not guarantee background host input.
 
 After native maximize/minimize/restore, call wait_for_window_state for the expected OS state, then inspect app contents. A successful Invoke may precede rendering. If Windows denies activation, tell the user to manually select the exact bound window; do not bypass foreground restrictions.
 
-Physical Escape or the banner cancel button ends the computer-use session completely: work stops, cursor restores and MCP connection closes. There is no Resume button. Do not automatically relaunch after user cancellation. Start a new session only when the user asks to continue; re-list/bind and inspect any partial app-side result. An injected Escape may also trigger the global exit listener.
+Physical Escape or the banner cancel button ends the active desktop session:
+work stops, the cursor restores and the banner/glow disappear. The MCP connection
+stays open but desktop tools reject while idle/stopped. There is no Resume button.
+Do not restart after local cancellation to finish the interrupted task. Wait for
+a new user instruction authorizing desktop use, then call
+`start_computer_use(after_user_stop=true)` and re-list/bind. This flag records your
+acknowledgment of that new instruction; it is not permission to evade Esc.
+An injected Escape may also trigger the global stop listener. `end_computer_use`
+does not erase the local-cancellation latch. Report uncertain partial effects.

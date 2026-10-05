@@ -111,13 +111,17 @@ class Activity:
                 if self.finish_stop(cancel):return
         self.monitor=threading.Thread(target=monitor,daemon=True);self.monitor.start()
     def finish_stop(self, cancel):
-        self.poll_stop(cancel)
-        if self.stopped.is_set() and self.acknowledged.is_set():
+        # Serialize monitoring with normal close: teardown must not be mistaken
+        # for companion/guard failure and latch a user stop on every normal end.
+        with self._close_lock:
+            if self._closed:return True
+            self.poll_stop(cancel)
+            if not (self.stopped.is_set() and self.acknowledged.is_set()):return False
             self.close()
             checkpoint('activity.session_exited')
-            if self.on_exit is not None:self.on_exit()
-            return True
-        return False
+        # Never hold the close lock while calling into the server lifecycle lock.
+        if self.on_exit is not None:self.on_exit()
+        return True
 
     def poll_stop(self, cancel):
         if not self.process.is_alive():self.stopped.set()

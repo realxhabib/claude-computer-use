@@ -10,7 +10,6 @@ import unittest
 from pathlib import Path
 
 
-@unittest.skipIf(sys.platform not in {"win32","darwin"}, "Desktop companion needs native GUI host")
 @unittest.skipUnless(all(importlib.util.find_spec(n) for n in ['mcp','httpx','uvicorn']), 'Install project dependencies')
 class HttpProtocolTests(unittest.TestCase):
     def test_authenticated_loopback_initialize_and_tool_discovery(self):
@@ -48,7 +47,7 @@ class HttpProtocolTests(unittest.TestCase):
                 self.assertEqual(notify.status_code,202,notify.text)
                 listing=client.post(url,headers=headers,json={'jsonrpc':'2.0','id':2,'method':'tools/list','params':{}})
                 self.assertEqual(listing.status_code,200,listing.text)
-                self.assertEqual(len(message(listing)['result']['tools']),20)
+                self.assertEqual(len(message(listing)['result']['tools']),23)
                 # Session ID alone is insufficient without its bearer token.
                 denial=client.post(url,headers={'Mcp-Session-Id':headers['Mcp-Session-Id']},json=body)
                 self.assertEqual(denial.status_code,401)

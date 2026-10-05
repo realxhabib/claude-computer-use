@@ -5,6 +5,7 @@ import atexit
 import multiprocessing
 import os
 import json
+import threading
 from mcp.server.fastmcp import FastMCP, Image
 from mcp.types import TextContent, ImageContent
 from .validation import bounded
@@ -14,6 +15,135 @@ from .worker import WorkerClient
 mcp = FastMCP('local-computer')
 _worker = None
 _activity = None
+_session_lock = threading.RLock()
+_session_state = 'idle'
+_session_id = 0
+
+
+def make_activity(cancel, on_exit):
+    from .activity import Activity
+    return Activity(cancel, on_exit=on_exit)
+
+
+def local_session_ended(session_id):
+    # The companion has already cancelled work, restored the cursor and closed.
+    # Keep MCP alive; only a deliberate new start can acquire the desktop again.
+    global _session_state
+    with _session_lock:
+        if session_id == _session_id:
+            _session_state = 'user_stopped'
+
+
+def _end_session(expected_id=None):
+    global _activity, _worker, _session_state
+    with _session_lock:
+        if expected_id is not None and expected_id != _session_id:
+            return {'state': _session_state, 'ended': False}
+        stopped = (_session_state == 'user_stopped' or
+                   (_activity is not None and _activity.stopped.is_set()))
+        _session_state = 'ending'
+        try:
+            if _worker is not None: _worker.cancel()
+            if _activity is not None:
+                _activity.close()
+                # Esc can arrive during cancellation/teardown, before the monitor
+                # gets its callback. Read the shared latch after the UI has exited.
+                stopped = stopped or _activity.stopped.is_set()
+        except BaseException:
+            _session_state = 'error'
+            raise
+        _activity = None
+        _worker = None
+        _session_state = 'user_stopped' if stopped else 'idle'
+        return {'state': _session_state, 'ended': True, 'target_discarded': True}
+
+
+def _start_session(after_user_stop=False):
+    global _activity, _worker, _session_state, _session_id
+    with _session_lock:
+        if _session_state == 'active':
+            _activity.check()
+            return {'state': 'active', 'session_id': _session_id, 'started': False}
+        if _session_state == 'error':
+            raise RuntimeError('Desktop cleanup failed. Call end_computer_use to retry cleanup before starting.')
+        if _session_state == 'user_stopped' and not after_user_stop:
+            raise RuntimeError('User cancelled computer use. Wait for a new user request, then start with after_user_stop=true.')
+        _end_session()
+        _session_id += 1
+        session_id = _session_id
+        _session_state = 'starting'
+        client = worker()
+        try:
+            activity = make_activity(client.cancel, lambda: local_session_ended(session_id))
+            _activity = activity
+            activity.check()
+        except BaseException:
+            _session_state = 'error'
+            # Retain a constructed controller if cleanup fails, so retry is possible.
+            _end_session()
+            raise
+        _session_state = 'active'
+        return {'state': 'active', 'session_id': session_id, 'started': True,
+                'target_discarded': True}
+
+
+def admitted_session():
+    with _session_lock:
+        if _session_state != 'active' or _activity is None:
+            raise RuntimeError('Computer use is not active (' + _session_state + '). Call start_computer_use for an authorized task first.')
+        client = worker()
+        epoch = client.epoch()
+        activity = _activity
+        activity.check()
+        with activity.lock:
+            activity.check()
+        return client, epoch, activity
+
+
+async def finish_cancelled_start(task):
+    # A second request cancellation must not abandon a desktop being acquired
+    # in a thread. Drain startup and its cleanup before propagating cancellation.
+    while not task.done():
+        try:
+            await asyncio.shield(task)
+        except asyncio.CancelledError:
+            continue
+    return task.result()
+
+
+@mcp.tool()
+async def start_computer_use(after_user_stop: bool = False) -> dict:
+    """Start desktop control for an authorized task; show indicator and enable cursor.
+    Reuse this MCP connection between tasks. After Esc/cancel, wait for a NEW user
+    request before setting after_user_stop=true. Never restart to evade cancellation.
+    Always call end_computer_use after completion or failure; each new session must bind a target.
+    """
+    task = asyncio.create_task(asyncio.to_thread(_start_session, after_user_stop))
+    try:
+        return await asyncio.shield(task)
+    except asyncio.CancelledError:
+        # A cancelled startup must not leave a newly acquired desktop running.
+        result = await finish_cancelled_start(task)
+        if result['started']:
+            cleanup_task = asyncio.create_task(asyncio.to_thread(_end_session, result['session_id']))
+            await finish_cancelled_start(cleanup_task)
+        raise
+
+
+@mcp.tool()
+async def end_computer_use() -> dict:
+    """End desktop control, cancel pending work, restore cursor and remove indicators.
+    Discard target/references, but keep MCP connected. Start again for the next authorized
+    task without reconnecting. Does not undo partial app-side effects.
+    """
+    return await asyncio.shield(asyncio.to_thread(_end_session))
+
+
+@mcp.tool()
+async def computer_session_status() -> dict:
+    """Read desktop session lifecycle state without starting desktop control."""
+    with _session_lock:
+        return {'state': _session_state, 'session_id': _session_id}
 
 
 def worker():
@@ -24,12 +154,7 @@ def worker():
 
 
 async def call(method, **arguments):
-    client = worker()
-    epoch = client.epoch()  # Capture before checks; stop cancellation fences this request.
-    if _activity is not None:
-        _activity.check()
-        with _activity.lock:
-            _activity.check()
+    client, epoch, activity = admitted_session()
     try:
         return await asyncio.to_thread(client.call, method, arguments, epoch=epoch)
     except asyncio.CancelledError:
@@ -150,27 +275,20 @@ async def scroll(amount: int, x: int, y: int) -> dict:
 
 @mcp.tool()
 async def wait(seconds: float = 0.5) -> dict:
-    """Wait briefly; reject local stop and abort if stop/resume occurs during the wait."""
+    """Wait briefly in an active session; abort on cancellation or session end."""
     bounded(seconds, 0, 3)
-    if _activity is None:
-        await asyncio.sleep(seconds)
-    else:
-        client = worker()
-        epoch = client.epoch()
-        _activity.check()
-        with _activity.lock:
-            _activity.check()
-        remaining = seconds
-        while True:
-            with _activity.lock:
-                _activity.check()
-                if client.epoch() != epoch:
-                    raise RuntimeError('Wait cancelled; worker generation changed during wait')
-            if remaining <= 0:
-                break
-            interval = min(remaining, 0.05)
-            await asyncio.sleep(interval)
-            remaining -= interval
+    client, epoch, activity = admitted_session()
+    remaining = seconds
+    while True:
+        with activity.lock:
+            activity.check()
+            if client.epoch() != epoch:
+                raise RuntimeError('Wait cancelled; worker generation changed during wait')
+        if remaining <= 0:
+            break
+        interval = min(remaining, 0.05)
+        await asyncio.sleep(interval)
+        remaining -= interval
     return {'waited': seconds}
 
 
@@ -220,18 +338,10 @@ async def cancel_pending() -> dict:
 
 
 def cleanup():
-    if _worker is not None: _worker.cancel()
-    if _activity is not None: _activity.close()
-
-
-def exit_session():
-    # Activity has cancelled native work, restored the cursor and closed both
-    # companions before invoking this. End the MCP connection, keeping Claude open.
-    os._exit(0)
+    _end_session()
 
 
 def main():
-    global _activity
     parser=argparse.ArgumentParser(description='Desktop MCP: local stdio, or authenticated loopback HTTP inside a dedicated VM')
     parser.add_argument('--transport',choices=['stdio','http'],default='stdio')
     parser.add_argument('--port',type=int,default=8765)
@@ -242,8 +352,6 @@ def main():
         parser.error('HTTP requires CLAUDE_COMPUTER_HTTP_TOKEN with at least 32 random characters')
     multiprocessing.freeze_support()
     atexit.register(cleanup)
-    from .activity import Activity
-    _activity = Activity(lambda: _worker.cancel() if _worker is not None else None, on_exit=exit_session)
     try:
         if args.transport=='stdio':mcp.run(transport='stdio')
         else:

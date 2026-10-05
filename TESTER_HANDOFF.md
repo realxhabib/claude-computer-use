@@ -18,6 +18,22 @@ separate modes and do not claim independence from target-window guards:
    ISOLATED_DESKTOP.md. Provisioning a VM is not bundled; determine existing VM
    availability before making host configuration changes.
 
+## v0.4.0 reusable-session acceptance (current)
+
+Update the marketplace/plugin and restart Claude Code once to load the new server.
+Connecting must not show a banner or change the cursor. Test Calculator via the
+skill: start → bind → 12×8 → verify96 → end. The banner must disappear and the
+cursor restore before Claude returns to chat. Request another calculation in the
+same conversation: start again without /mcp reconnect, with a new target binding.
+Repeat at least three cycles; inspect for surviving old companions/workers.
+
+Physical Esc must end only desktop control, leave lifecycle status responsive,
+and reject ordinary starts until a new user instruction authorizes
+`after_user_stop=true`. Test Esc during pending input and startup/end races,
+cleanup failure, banner cancel button and transport shutdown. No Resume UI.
+Old v0.3.9 transport termination is no longer the expected behavior. Local cloud
+checks use fake companions plus real idle MCP; they do not certify native cycles.
+
 ## v0.3.10 marketplace install acceptance (current)
 
 Install uv and restart Claude Code so PATH is refreshed. Use the GitHub marketplace

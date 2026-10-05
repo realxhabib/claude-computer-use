@@ -1,8 +1,9 @@
-# Computer use for Claude Code — v0.3.10
+# Computer use for Claude Code — v0.4.0
 
 A Claude Code plugin for controlling desktop apps, with a bundled local MCP
 server and automatic Python dependency setup. Windows v0.3.9 has delegated native
-smoke evidence; the v0.3.10 marketplace installation needs real-host testing.
+smoke evidence, and the user reports successful Calculator use through v0.3.10.
+v0.4.0 adds restartable desktop sessions; its native lifecycle needs real-host testing.
 macOS operation is not native-certified. This is not a measured ChatGPT/Codex
 equivalent. Windows temporarily enlarges the normal native arrow while active;
 macOS uses its native pointer plus glow.
@@ -70,11 +71,20 @@ as your old registration). Otherwise two servers can compete for cursor ownershi
 ### Try it
 
 Ask Claude: “Use computer-use to select my open Calculator, calculate 12 × 8,
-and verify the result.” The active server displays the banner and larger Windows
-arrow. Press **Esc** or click **Esc to cancel** to end computer use, restore the
-cursor, and remove the indicator. Claude Code stays open. Only reconnect through
-`/mcp` when you explicitly want a new computer-use session. Host-driven reconnect
-behavior still needs native Claude Code acceptance testing.
+and verify the result.” Claude calls `start_computer_use` to show the banner and larger Windows arrow,
+then `end_computer_use` when finished. Ending restores the cursor, removes the
+indicator and discards targets while leaving MCP connected. Claude can start
+again for the next authorized desktop task without reconnecting. Installing or
+connecting the plugin alone no longer acquires the desktop.
+
+Press **Esc** or click **Esc to cancel** to end the current desktop session.
+The connection stays idle. Claude must wait for a new user instruction before
+calling `start_computer_use(after_user_stop=true)`; ordinary starts reject after
+local cancellation. The flag is an acknowledgment supplied by Claude, not an
+independent check that a human authorized restart; the skill instructs Claude to
+wait for that new request. There is no Resume button. `computer_session_status` reports
+idle/active/user_stopped/error without turning on desktop control. A failed
+cleanup blocks new sessions until `end_computer_use` successfully retries it.
 
 ### Updates and removal
 
@@ -95,7 +105,7 @@ see [ISOLATED_DESKTOP.md](ISOLATED_DESKTOP.md).
 
 ## Target selection and recovery
 
-1. Run `desktop_diagnostics`, `list_apps`, and `list_windows`.
+1. Call `start_computer_use`, then run `desktop_diagnostics`, `list_apps`, and `list_windows`.
 2. `bind_window(window_id)` binds the exact window ID, owning PID and process
    birth time. Bind never implicitly activates or chooses a similarly named app.
 3. `activate_window()` explicitly restores/raises that bound window and verifies
@@ -126,7 +136,7 @@ interference. Do not market foreground guards as independent-cursor isolation.
 
 ## New controls and limits
 
-20 tools: app/window discovery; bind/activate; diagnostics/status; target capture;
+23 tools: start/end/session status; app/window discovery; bind/activate; diagnostics/status; target capture;
 click/hover/drag/scroll; Unicode input/chords; native inspect/search/read/act; wait;
 state settlement, and cancellation. `list_apps` includes apps with enumerated windows, not all
 installed/background apps. There is no launch/install-app tool.
@@ -236,13 +246,22 @@ Generic MCP calls use an 8-second worker deadline; the diagnostic CLI uses 12 se
 
 ## Visible activity and local stop
 
-The desktop server now starts a separate companion showing “Claude is using your computer — Esc to cancel” and a soft blue glow around the native system pointer. The halo does not provide an independent cursor. Escape ends the session: the worker is cancelled, the original cursor restored, the banner and glow closed, and the MCP server exited. There is no Resume button. Start a fresh server session and verify partially executed actions before continuing. The indicator stays visible between calls while computer use is enabled.
+`start_computer_use` starts a separate companion showing “Claude is using your
+computer — Esc to cancel” and a soft blue glow around the native system pointer.
+The halo does not provide an independent cursor. `end_computer_use`, Escape and
+the banner cancel button release the desktop: worker cancelled, original cursor
+restored, banner and glow removed. MCP remains connected and idle. There is no
+Resume button. A new session starts with fresh targets and references. The skill
+instructs Claude to end desktop use when a task completes or fails; it is not an
+automatic detector of task completion or a wall-clock idle timeout.
 
 This new UI requires PySide6 and pynput. macOS requires Input Monitoring permission for the global Escape listener, alongside existing Accessibility permissions. Startup refuses to proceed if the companion fails to initialize; companion loss blocks subsequent calls. Native appearance, click-through behavior, global Escape delivery and permissions still require real Windows/macOS testing. Escape cannot undo input already sent or prevent a queued OS event. A killed/failed companion cannot be resumed; restart the server.
 
 The private diagnostic Unicode CLI is tester-only and does not start the activity companion; its controlled empty-editor runs are separate from the user-facing MCP server.
 
-The global listener may also observe an Escape injected by the agent; using Escape to dismiss a menu can therefore exit the session. It is not a physical-key-only detector.
+The global listener may also observe an Escape injected by the agent; using Escape to dismiss a menu can therefore end desktop control. It is not a physical-key-only detector.
+
+## Historical changes (v0.4.0 lifecycle above supersedes transport-exit instructions)
 
 ### v0.3.3 stop-gate correction
 
@@ -289,3 +308,13 @@ Escape and the banner's cancel button now stop pending native work, restore the 
 The exit callback runs only after cleanup returns successfully. If restoration/cleanup fails, input stays blocked rather than exiting and abandoning an unconfirmed cursor state. Calls already dispatched can have partial app-side effects; inspect actual state after restarting. Native terminal-Escape acceptance is pending; historical v0.3.8 physical Escape/Resume results do not prove the new exit behavior.
 
 On Esc the overlay hides its banner and glow on its next UI frame while teardown finishes. A failed teardown leaves the controller blocked for manual recovery. The server never relaunches itself; Claude Code connection restart policy must be checked in the native acceptance run.
+
+### v0.4.0 reusable sessions
+
+The server now connects without launching desktop companions. Three lifecycle
+tools let Claude start and finish desktop work over one persistent connection.
+Normal completion can be followed by a new session without reconnecting. Escape
+still removes the visuals and restores the cursor, but no longer kills MCP.
+A cancellation latch requires a deliberate new user request before restarting.
+This supersedes v0.3.9's transport-exit behavior. Native physical Escape, repeated
+start/end cycles and GUI cleanup under this version remain to be tested.

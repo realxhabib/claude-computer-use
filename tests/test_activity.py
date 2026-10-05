@@ -9,6 +9,7 @@ from claude_computer_use.activity import Activity
 class ActivityTests(unittest.TestCase):
     def controller(self):
         obj=Activity.__new__(Activity)
+        obj._close_lock=threading.RLock();obj._closed=False
         obj.process=Mock();obj.process.is_alive.return_value=True
         obj.stopped=threading.Event();obj.acknowledged=threading.Event();obj.lock=threading.Lock()
         return obj
@@ -77,3 +78,11 @@ class ActivityTests(unittest.TestCase):
     def test_close_is_idempotent(self):
         obj=self.controller();obj.cursor_guard=None;obj.shutdown=threading.Event();obj.process.is_alive.return_value=False
         obj.close();obj.close();self.assertEqual(obj.process.join.call_count,1)
+
+    def test_normal_close_does_not_become_user_stop_in_monitor(self):
+        obj=self.controller();obj.cursor_guard=None;obj.shutdown=threading.Event()
+        obj.process.is_alive.return_value=False;obj.on_exit=Mock();cancel=Mock()
+        obj.close()
+        self.assertTrue(obj.finish_stop(cancel))
+        self.assertFalse(obj.stopped.is_set())
+        cancel.assert_not_called();obj.on_exit.assert_not_called()

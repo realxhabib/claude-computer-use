@@ -1,6 +1,7 @@
 """Public MCP proxies, with scheduling isolated from sandbox async IPC."""
 import asyncio
 import sys
+import threading
 import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -10,13 +11,16 @@ from claude_computer_use import server
 
 class ServerTests(unittest.TestCase):
     def setUp(self):
+        activity=Mock();activity.lock=threading.RLock();activity.stopped.is_set.return_value=False
+        self.state_patch=patch.object(server,'_session_state','active');self.state_patch.start()
+        self.activity_patch=patch.object(server,'_activity',activity);self.activity_patch.start()
         self.worker=Mock()
         self.worker.epoch.return_value=0
         self.worker.call.return_value={'ok':True}
         self.worker_patch=patch.object(server,'worker',return_value=self.worker);self.worker_patch.start()
         async def inline(function,*args,**kwargs):return function(*args,**kwargs)
         self.thread_patch=patch.object(server.asyncio,'to_thread',side_effect=inline);self.thread_patch.start()
-    def tearDown(self):self.thread_patch.stop();self.worker_patch.stop()
+    def tearDown(self):self.thread_patch.stop();self.worker_patch.stop();self.activity_patch.stop();self.state_patch.stop()
 
     def test_every_proxy_forwards_exact_arguments_and_errors(self):
         calls=[('list_apps',{}),('list_windows',{}),('bind_window',{'window_id':'123'}),('activate_window',{}),

@@ -1,0 +1,37 @@
+{
+  "version": "0.4.0",
+  "change": "Reusable desktop sessions on one persistent MCP connection",
+  "tests": {
+    "total": 138,
+    "passed": 136,
+    "skipped": 2,
+    "failures": 0,
+    "errors": 0,
+    "skips": [
+      "native desktop stdio task cycles",
+      "Windows inherited pipe"
+    ]
+  },
+  "real_transport_checks": [
+    "stdio idle initialize/discovery/status/end on one connection",
+    "idle tools reject without acquiring desktop",
+    "Linux native startup error does not close transport",
+    "authenticated loopback HTTP initialize/discovery"
+  ],
+  "mocked_desktop_checks": [
+    "three start/end cycles with distinct workers",
+    "late Esc during end latch retained",
+    "normal close is not treated as user cancellation",
+    "stale callback and old worker generations fenced",
+    "cleanup failure blocks restart",
+    "single and repeated cancelled startup cleans newly acquired desktop"
+  ],
+  "critic": "PASS local gate after teardown and repeated-cancellation corrections; independent 34 tests pass",
+  "prior_user_feedback": "User reports plugin successfully operated Calculator before this lifecycle revision",
+  "limitations": [
+    "No native Windows/macOS reusable-session acceptance yet",
+    "No Claude model-driven automatic task completion/end validation",
+    "after_user_stop is agent acknowledgment, not independent human authorization verification",
+    "Task completion cleanup depends on tool use and skill adherence; no idle timeout"
+  ]
+}

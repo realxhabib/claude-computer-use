@@ -1,6 +1,6 @@
 {
   "name": "computer-use",
-  "version": "0.3.10",
+  "version": "0.4.0",
   "description": "Local desktop control for Claude Code. Experimental Windows support; macOS validation pending.",
   "repository": "https://github.com/realxhabib/claude-computer-use",
   "author": {
