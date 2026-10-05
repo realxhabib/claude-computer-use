@@ -1,0 +1,35 @@
+{
+  "version": "0.3.3",
+  "provenance": "Delegated Windows testing; reports remain on tester host, not independently inspected here",
+  "suite": {
+    "passed": 89,
+    "seconds": 6.352
+  },
+  "installation": "Editable v0.3.3 in existing Python 3.14 venv",
+  "deadline_seconds": 8,
+  "launchers": {
+    "python -m claude_computer_use.server": {
+      "status_seconds": 8.034,
+      "status_result": "TIMEOUT",
+      "bind_seconds": 8.022,
+      "bind_result": "TIMEOUT"
+    },
+    "claude-computer-use.exe": {
+      "status_seconds": 8.034,
+      "status_result": "TIMEOUT",
+      "bind_seconds": 8.022,
+      "bind_result": "TIMEOUT"
+    }
+  },
+  "both_sessions": "Initialize, spawn workers, kill workers at deadline; stderr only two CallToolRequests",
+  "reports_on_tester_host": [
+    "C:\\Users\\dylan\\Documents\\ChatGPT\\ComputerUse\\revision-033-results\\module-integration.json",
+    "C:\\Users\\dylan\\Documents\\ChatGPT\\ComputerUse\\revision-033-results\\console-integration.json"
+  ],
+  "root_cause": "UNPROVEN; diagnostic worker stack capture underway",
+  "pending": [
+    "Human Resume",
+    "Physical Escape during typing"
+  ],
+  "acceptance": "Full MCP integration fails these smoke trials despite packaged suite pass"
+}

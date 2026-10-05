@@ -1,0 +1,52 @@
+{
+  "version": "0.3.4",
+  "provenance": "Delegated real Windows report; source reports remain on tester host",
+  "suite": {
+    "tests": 99,
+    "passed": 98,
+    "failed": 1,
+    "seconds": 7.116,
+    "failure": "Native ping PID43448 differed from launcherPID25196"
+  },
+  "separate_cleanup_probe": {
+    "launcher_pid": 45060,
+    "children": [
+      1396,
+      30368
+    ],
+    "ping_pid": 30368,
+    "cancel_seconds": 0.015,
+    "none_alive_after_seconds": 0.5
+  },
+  "actual_mcp_default_deadline_seconds": 8,
+  "module": {
+    "status_seconds": 0.536,
+    "bind_seconds": 0.01,
+    "result": "PASS"
+  },
+  "console": {
+    "status_seconds": 0.55,
+    "bind_seconds": 0.014,
+    "result": "PASS"
+  },
+  "calculator": {
+    "result": 96,
+    "native_actions": 6,
+    "stale_references_rejected": true
+  },
+  "injected_escape": {
+    "pending_wait_cancel_seconds": 0.122,
+    "worker_cleared": true,
+    "stopped_tools_rejected": [
+      "computer_status",
+      "list_windows",
+      "bind_window",
+      "input",
+      "wait(0)"
+    ],
+    "companion_death_failclosed": true
+  },
+  "visuals": "New active/stopped banner and halo captured on tester host",
+  "human_resume": "Observed but physical source unconfirmed; first postResume capture_window command typo INVALID; corrected run pending",
+  "reports": "C:\\Users\\dylan\\Documents\\ChatGPT\\ComputerUse\\revision-034-results"
+}

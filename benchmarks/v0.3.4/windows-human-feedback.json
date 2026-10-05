@@ -1,0 +1,30 @@
+{
+  "version": "0.3.4",
+  "provenance": "Delegated human feedback and native harness evidence",
+  "human_feedback": {
+    "physical_escape_changes_banner": true,
+    "local_resume_works": true,
+    "duplicate_pointer": "Normal Windows pointer plus overlay arrow visible during movement; corrected by removing drawn arrow in v0.3.6"
+  },
+  "corrected_resume_harness": {
+    "wait_while_stopped": "REJECT",
+    "screenshot_after_resume": "No target bound",
+    "explicit_rebind": "PASS"
+  },
+  "invalid_trial": "Initial postResume capture_window typo invalid; apparent immediate crash confounded by harness cleanup",
+  "longer_hold": "30s followup interrupted by stop-or-indicator-failure; precleanup alive/exitcode/stopped not recorded, cause unproven; user later said okay it worked",
+  "parent_death_probe": {
+    "tracked_launcher": 32792,
+    "actual_worker": 46424,
+    "killed_parent": 42188,
+    "all_four_sampled_descendants_gone_after_seconds": 1
+  },
+  "remaining": [
+    "Physical Escape during paced typing",
+    "Local cancel button-specific check",
+    "Repeated cycles",
+    "Multi-monitor/DPI",
+    "v0.3.5 tree-test rerun",
+    "v0.3.6 single-pointer native check"
+  ]
+}

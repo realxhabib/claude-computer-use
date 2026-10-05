@@ -1,0 +1,84 @@
+{
+  "version": "0.2.0",
+  "source_thread": "codex://threads/01a1077d-eaa4-7530-9df0-c1589af308f1",
+  "evidence_attribution": "Testing-thread delegation summaries; underlying Windows log files are not available in this cloud filesystem. Not independently rerun here.",
+  "zip_sha256_reported": "F56ECF1E093307D95C64A6DAA6BD97827A2112E26D8AD30B4A2DEEF56AEA7D7D",
+  "zip_sha256_cloud_archive": "F56ECF1E093307D95C64A6DAA6BD97827A2112E26D8AD30B4A2DEEF56AEA7D7D",
+  "environment": {
+    "os": "Windows",
+    "python": "3.14",
+    "screen": [
+      1920,
+      1080
+    ],
+    "claude_code": "2.1.289",
+    "claude_reported_model": "claude-opus-5-5"
+  },
+  "packaged_tests": {
+    "passed": 30
+  },
+  "native_calculator_harness": {
+    "initial_state": "preopened by Codex; not full closed-app T01",
+    "actions": [
+      "Clear",
+      "One",
+      "Two",
+      "Multiply by",
+      "Eight",
+      "Equals"
+    ],
+    "action_count": 6,
+    "verified_display": "96",
+    "stale_reference_rejections": 6,
+    "summed_operation_seconds": 2.187,
+    "timing_scope": "fresh discovery+Invoke+verification; excludes model and interpreter; not comparable to model/tool-loop wall time",
+    "initial_status_and_inspection_seconds": 0.53,
+    "inspection_controls_approx": 54,
+    "inspection_errors": 0,
+    "unicode_test": "café 日本語 rejected before typing (expected v0.2 limitation)"
+  },
+  "claude_trials": [
+    {
+      "elapsed_seconds": 9.998,
+      "outcome": "INTERRUPTED",
+      "permission_denials": 0,
+      "mutation_tools_used": 0
+    },
+    {
+      "elapsed_seconds": 18.27,
+      "outcome": "INTERRUPTED",
+      "permission_denials": 0,
+      "mutation_tools_used": 0
+    }
+  ],
+  "model_interpretation": "Both interrupted by foreground changes; not controlled failures and no controlled success-rate/speed inference. Claude accurately did not claim preexisting 96 as its own result.",
+  "capture_gap": "Full-primary-desktop screenshot captured unrelated app content, including a guard/capture race.",
+  "codex_sky_observations": {
+    "calculator_accessibility": "null in observed trial",
+    "calculator_screenshot_keyboard": "96 completed",
+    "occlusion": "get_window_state(window=Calculator) returned occluding app/desktop in one run. Not proof of isolated target pixels or independent cursor.",
+    "observed_advantage": "explicit app/window selection, launch and targeted input"
+  },
+  "diagnostic_gap": {
+    "sandbox_cursor": [
+      0,
+      0
+    ],
+    "sandbox_uia_hresult": -2147220991,
+    "unsandboxed_native": "succeeded"
+  },
+  "tree_gap": "Maximized Calculator hit default depth8 truncation; reported true, errors0; find Clear succeeded",
+  "matrices_not_run": [
+    "macOS",
+    "DPI",
+    "multi-monitor",
+    "UAC",
+    "hung app",
+    "concurrent-host VM isolation"
+  ],
+  "original_windows_log_paths": [
+    "benchmark-results/benchmark-report.json",
+    "plugin-native-calculator.json",
+    "model-trials-summary.json"
+  ]
+}

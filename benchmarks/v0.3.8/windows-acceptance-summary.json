@@ -1,0 +1,73 @@
+{
+  "version": "0.3.8",
+  "provenance": "Delegated real Windows report; artifacts retained on tester host, not independently collected in cloud",
+  "suite": {
+    "passed": 120,
+    "tests": 120,
+    "seconds": 10.273
+  },
+  "forced_guard_death_cleanup": {
+    "original_repro_seconds": 0.143,
+    "additional_trials_seconds": [
+      0.109,
+      0.102,
+      0.114
+    ],
+    "exact_baseline_cursor_shape_bitmap_restored": true,
+    "no_sampled_owned_processes_survive": true,
+    "sample_scope": [
+      "guard",
+      "companion",
+      "worker launcher",
+      "worker interpreter"
+    ]
+  },
+  "orphaned_bounded_lock": {
+    "real_child_killed_while_holding_lock": true,
+    "parent_reject_seconds": 0.11
+  },
+  "ownership_collision": {
+    "refusal_seconds": 2.037,
+    "prior_v037_seconds": 11.179,
+    "first_session_arrow_hash_unchanged": true
+  },
+  "actual_mcp": {
+    "deadline_seconds": 8,
+    "module": {
+      "status_seconds": 0.524,
+      "bind_seconds": 0.01,
+      "result": "PASS"
+    },
+    "console": {
+      "status_seconds": 0.585,
+      "bind_seconds": 0.011,
+      "result": "PASS"
+    }
+  },
+  "physical_escape_resume_timing": {
+    "status": "Rerun observed physical feedback and native diagnostics; earlier120srun inconclusive",
+    "escape_received_to_restore_end_ms": 12.25,
+    "escape_received_to_acknowledgment_ms": 29.263,
+    "resume_click_to_install_end_ms": 6.68,
+    "scope": "Logged callback/API intervals; not physical event-to-visible-frame latency",
+    "exact_cursor_restoration": true,
+    "stopped_wait_rejected": true,
+    "post_resume_screenshot_before_rebind": "No target bound",
+    "explicit_rebind": "PASS",
+    "guard_companion_healthy_seconds": 10,
+    "clean_exit_exact_restoration": true
+  },
+  "production_edits_by_tester": false,
+  "reports": "C:\\Users\\dylan\\Documents\\ChatGPT\\ComputerUse\\revision-038-results",
+  "limits": "Sampled native smoke evidence; no broad reliability, DPI/multimonitor, macOS or model-parity certification",
+  "perceived_transition_lag": "Visual observation requested; no end-to-end frame latency measured",
+  "physical_timing_second_repeat": {
+    "escape_callback_to_restore_end_ms": 15.054,
+    "escape_callback_to_stop_acknowledged_ms": 45.041,
+    "resume_click_to_install_end_ms": 10.279,
+    "exact_restore_rebind_10_second_stability_clean_exit": "PASS",
+    "scope": "Callback/API intervals, not event-to-visible-frame latency"
+  },
+  "visual_feedback": "User reports cursor transition was instant; identifies lingering stopped banner as unacceptable under new terminal-Escape requirement",
+  "terminal_escape_acceptance": "NOT SATISFIED by v0.3.8 paused/Resume behavior; policy superseded by v0.3.9"
+}

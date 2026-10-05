@@ -1,0 +1,79 @@
+{
+  "version": "0.3.7",
+  "provenance": "Delegated Windows native evidence; artifacts retained on tester host",
+  "suite": {
+    "passed": 113,
+    "seconds": 10.669
+  },
+  "module_mcp": {
+    "status_seconds": 0.543,
+    "bind_seconds": 0.016,
+    "deadline_seconds": 8,
+    "result": "PASS"
+  },
+  "console_mcp": {
+    "status_seconds": 0.56,
+    "bind_seconds": 0.017,
+    "deadline_seconds": 8,
+    "result": "PASS"
+  },
+  "native_cursor": {
+    "original_size": [
+      32,
+      32
+    ],
+    "original_hotspot": [
+      0,
+      0
+    ],
+    "active_size": [
+      48,
+      48
+    ],
+    "active_hotspot": [
+      2,
+      2
+    ],
+    "synthetic_stop_restores_exact_bitmap_hotspot": true,
+    "human_one_pointer_confirmation": true,
+    "physical_escape_restores": true,
+    "local_resume_reapplies_48px": true,
+    "before_rebind_screenshot": "No target bound",
+    "explicit_rebind": "PASS",
+    "guard_companion_stable_seconds": 10,
+    "normal_shutdown_exact_restore": true
+  },
+  "synthetic_latency_ms": {
+    "pixel_restore": [
+      20.7,
+      27.8,
+      24.1
+    ],
+    "acknowledgment": [
+      34.8,
+      44.3,
+      37.4
+    ],
+    "scope": "Excludes physical key dispatch and local Resume click latency"
+  },
+  "ownership_collision": {
+    "refusal_seconds": 11.18,
+    "first_guard_alive_cursor_unchanged": true
+  },
+  "forced_guard_death": {
+    "calls_blocked": true,
+    "original_arrow_restored": true,
+    "acknowledged": true,
+    "cleanup": "HANG in three probes",
+    "stack_location": "multiprocessing.synchronize.Condition.notify -> Event.set -> native_cursor.close shutdown.set",
+    "inference": "Consistent with poisoned interprocess Event after forced death; stack locates blocking call, not exact lock-death timing"
+  },
+  "user_transition_lag": "Noticed; which transition/duration pending clarification",
+  "remaining": [
+    "Physical Escape during paced typing",
+    "DPI/multimonitor",
+    "I-beam/resize/busy semantics",
+    "Parent/companion forced-death cursor bitmap checks"
+  ],
+  "reports": "C:\\Users\\dylan\\Documents\\ChatGPT\\ComputerUse\\revision-037-results"
+}

@@ -1,0 +1,55 @@
+{
+  "version": "0.3.9",
+  "provenance": "Delegated Windows native test report; source artifacts remain on tester host",
+  "suite": {
+    "passed": 126,
+    "tests": 126,
+    "seconds": 9.449
+  },
+  "corrected_injected_escape": {
+    "module": {
+      "callback_to_cursor_restore_ms": 12.237,
+      "callback_to_session_exited_ms": 272.451,
+      "callback_to_transport_end_ms_approx": 308
+    },
+    "console": {
+      "callback_to_cursor_restore_ms": 11.817,
+      "callback_to_session_exited_ms": 80.668,
+      "callback_to_transport_end_ms_approx": 199
+    },
+    "exact_original_bitmap_hotspot_restored": true,
+    "indicator_windows_after_transport_end": 0,
+    "indicator_windows_after_10_seconds": 0,
+    "sampled_owned_descendants_after_10_seconds": 0,
+    "resume_state_present": false,
+    "scope": "Injected global key through actual module and console launchers; test MCP client, not Claude Code host"
+  },
+  "invalid_attempts": "Initial injected probes lacked foreground target and are invalid; corrected probes activate first. Diagnostic analysis must filter current trial PIDs because historical failed-attempt rows remain.",
+  "physical_module_trial": {
+    "observed_escape": false,
+    "result": "Expired; clean shutdown only, no physical terminal-key acceptance"
+  },
+  "historical_orphan_cleanup": {
+    "version": "0.3.7",
+    "companion_pids": [
+      31400,
+      39692
+    ],
+    "origin": "Prior tester forced-controller kills",
+    "removed_by_tester": true,
+    "after_removal": "Zero remaining indicators; exact normal cursor restored",
+    "interpretation": "These historical orphans caused the still-visible banner; not assigned to corrected v0.3.9 trials"
+  },
+  "pending": [
+    "Physical v0.3.9 Escape",
+    "Banner cancel button",
+    "Terminal exit during native stall",
+    "Claude Code host-driven reconnect"
+  ],
+  "reports": [
+    "module-injected-terminal.json",
+    "console-injected-terminal.json",
+    "Diagnostic phase logs filtered by current PIDs"
+  ],
+  "timing_limit": "Callback/API and sampled transport timings, not physical-event-to-visible-frame latency"
+}

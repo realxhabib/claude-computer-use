@@ -1,0 +1,37 @@
+{
+  "version": "0.3.0",
+  "environment": "Linux",
+  "local_behavior_tests": {
+    "passed": 60,
+    "skipped": 0,
+    "independently_rerun_by_critic": true
+  },
+  "real_stdio_protocol": {
+    "status": "PASS",
+    "tools_discovered": 19,
+    "evidence": "61-test full suite including stdio passed in 1.516 seconds"
+  },
+  "real_authenticated_loopback_http": {
+    "status": "PASS",
+    "tests": 1,
+    "elapsed_seconds": 0.682,
+    "scope": "initialize, bearer rejection, session and 19-tool discovery; no native desktop"
+  },
+  "aggregate": "62 tests passed across completed runs; final combined rerun aborted before new evidence",
+  "wheel_build": "PASS",
+  "native_v030_windows": "NOT RUN",
+  "native_v030_macos": "NOT RUN",
+  "independent_cursor_or_vm_isolation": "NOT VALIDATED",
+  "controlled_chatgpt_codex_comparison": "NOT RUN",
+  "code_sha256": {
+    "src/claude_computer_use/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/claude_computer_use/accessibility.py": "60b6d083ced817d44f4e8309e0384517765cdf9d96eaec6d48b5de256cb649d6",
+    "src/claude_computer_use/http_transport.py": "331a1a9a9e14ba784ff0d0f0a4852390d1733a6f403c765af119c6842762a844",
+    "src/claude_computer_use/runtime.py": "9ab3b88e081fce2a10f7671efea5ad08a40d38637b9882dd0d2cae139c37324a",
+    "src/claude_computer_use/server.py": "ac977ed6dcb2207a2f81cbff0bf63be60075f3272005ef351073a6ced7eb7db2",
+    "src/claude_computer_use/unicode_input.py": "d81396e6a4af43225ddf9d852dcd1ee408b767ef562b9130da1add78e1de004a",
+    "src/claude_computer_use/validation.py": "c6b1b47904140cca18c003cbc5509c33932886898b2e246dfb22531612de4794",
+    "src/claude_computer_use/windows.py": "dcd7b7fe89535c910208db883d2a1096cabdf9eeb7b4d48eb3bfd9b6a82a729e",
+    "src/claude_computer_use/worker.py": "9be58b8013560dab420c06a44ffa2eb18373a3a515061d8f09d9c70b27c959d9"
+  }
+}

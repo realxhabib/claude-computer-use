@@ -1,0 +1,35 @@
+{
+  "version": "0.3.6",
+  "local_tests": {
+    "passed": 96,
+    "skipped": 1,
+    "native_launch_test": "Windows retest required; skipped on Linux"
+  },
+  "wheel_build": "PASS",
+  "scope": "Removes duplicate painted arrow; glow highlights unchanged native pointer; includes v0.3.5 owned-tree native-test correction",
+  "native_evidence_version": "0.3.4, preserved separately: both actualMCPlaunchers pass, Calculator96, physicalEsc/localResume userconfirmation and correctedrebindharness",
+  "pending": [
+    "Native single-pointer comparison",
+    "Native owned-tree suite rerun",
+    "Repeated cycles and longerhold diagnosis",
+    "PhysicalEscape during pacedtyping",
+    "Localcancelbutton",
+    "DPI/multimonitor"
+  ],
+  "source_hashes": {
+    "src/claude_computer_use/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/claude_computer_use/accessibility.py": "60b6d083ced817d44f4e8309e0384517765cdf9d96eaec6d48b5de256cb649d6",
+    "src/claude_computer_use/activity.py": "7c4a1bc50ff9ee37b760a48d4705d3d8d3fe29191b29e0eb4c9c9d901ef8481c",
+    "src/claude_computer_use/activity_style.py": "3198cdb57b6e8818ab5d8eed8abf13e5c2b834596fb18b89e8f97d3323501592",
+    "src/claude_computer_use/diagnostics.py": "f8ed5a869bf0d56821088b36aeda926b4d71452936196ccd23f540b28ee95fe3",
+    "src/claude_computer_use/http_transport.py": "331a1a9a9e14ba784ff0d0f0a4852390d1733a6f403c765af119c6842762a844",
+    "src/claude_computer_use/runtime.py": "64c11a3222bf1878b18d936ec683127bf7e0ff106ead46703e0e4e6748618942",
+    "src/claude_computer_use/server.py": "440ddd649532bb599390b13afe56a1788c171f66c0c8021ed2981ed9aee72f7b",
+    "src/claude_computer_use/unicode_input.py": "5b88aa8140af0df2389d55f98ba0145344ba9a36e0ff9c72859900af495f2aed",
+    "src/claude_computer_use/unicode_probe.py": "5877aba9f36a84c47ec21b1fca9ee6bda1ac9e66a5b1ec5c373bc4c7b3f215d8",
+    "src/claude_computer_use/validation.py": "c6b1b47904140cca18c003cbc5509c33932886898b2e246dfb22531612de4794",
+    "src/claude_computer_use/windows.py": "99839954da25c97f2c914aff6f2246940c16a14b6ad030c4a94f16e71d0789d7",
+    "src/claude_computer_use/worker.py": "0daae3aff2b3f6ff3b4146616641c491d060eebbbbadb85414c850ce369d9149",
+    "src/claude_computer_use/worker_entry.py": "659c5da85e39f4f1f2cc42de93ff91da244d433728adfc27aa3c2435675ee6b2"
+  }
+}

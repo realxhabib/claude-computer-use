@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Desktop benchmark fixture</title>
+<style>body{font:18px system-ui;margin:30px}section{padding:20px;border:1px solid #888;margin:20px 0}button{font:inherit;margin:8px;padding:10px}#log{position:fixed;right:10px;top:10px;background:#fff;border:2px solid;padding:10px}#details[hidden]{display:none}</style>
+<h1>Desktop benchmark</h1>
+<section aria-label="First section"><h2>FIRST section</h2><button id="first">Save</button></section>
+<section aria-label="Second section"><h2>SECOND section</h2><button id="second">Save</button><button id="rename">Rename second Save to Delete</button><button id="disable">Disable second button</button></section>
+<label><input id="notifications" type="checkbox">Notifications</label>
+<div role="tablist" aria-label="Views"><button id="overview-tab" role="tab" aria-selected="true" aria-controls="overview">Overview</button><button id="details-tab" role="tab" aria-selected="false" aria-controls="details">Details</button></div>
+<div id="overview" role="tabpanel">Overview panel</div><div id="details" role="tabpanel" hidden>Details panel</div>
+<div style="height:1800px">Scroll down to the bottom marker.</div><p id="bottom">Bottom marker</p>
+<output id="log" aria-live="polite">No events</output>
+<script>
+const log=document.querySelector('#log');const events=[];function record(event){events.push(event);log.textContent=events.join(', ')}
+for(const id of ['first','second'])document.getElementById(id).onclick=()=>record('save-'+id);
+document.getElementById('rename').onclick=()=>{document.getElementById('second').textContent='Delete';record('rename')};
+document.getElementById('disable').onclick=()=>{document.getElementById('second').disabled=true;record('disable')};
+document.getElementById('notifications').onchange=e=>record('notifications-'+e.target.checked);
+for(const id of ['overview','details'])document.getElementById(id+'-tab').onclick=()=>{for(const p of ['overview','details']){document.getElementById(p).hidden=p!==id;document.getElementById(p+'-tab').setAttribute('aria-selected',String(p===id))}record('tab-'+id)};
+</script></html>

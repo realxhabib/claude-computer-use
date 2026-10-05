@@ -1,0 +1,40 @@
+{
+  "version": "0.3.1",
+  "provenance": "Transcribed from delegated Windows report; not independently collected in cloud",
+  "windows": "11 10.0.26200",
+  "python": "3.14.0",
+  "suite": {
+    "passed": 77,
+    "errors": 0,
+    "failures": 0,
+    "skips": 0,
+    "seconds": 4.074
+  },
+  "zip_sha256": "e5142f43d0a818674dc51fc2795eb7e673042dd495c9470ac2514b42002a2b16",
+  "batch": {
+    "actual": "caf\u00e9 \u672c\u672c\u8a9e \ud83d\ude00\rsecond eeee\ttab",
+    "normalized_match": false,
+    "cli_seconds": 1.687,
+    "same_editor": true,
+    "handle": 4262896,
+    "all_events_accepted": true
+  },
+  "paced": {
+    "actual": "caf\u00e9 \u65e5\u672c\u8a9e \ud83d\ude00\rsecond line\ttab",
+    "normalized_match": true,
+    "cli_seconds": 2.309,
+    "same_editor": true,
+    "handle": 1182236,
+    "all_events_accepted": true
+  },
+  "both": {
+    "caller_worker_payload_match": true,
+    "received_sha256": "584e64540bdf14674ff9ed32decd006216ada20a95372e9269645ff33a23e511",
+    "clipboard_text_hash_unchanged": true
+  },
+  "limitations": [
+    "One failure and one success; reliability and root cause unresolved",
+    "No independent shared-host cursor demonstrated",
+    "No native macOS certification"
+  ]
+}

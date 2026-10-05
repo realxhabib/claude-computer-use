@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "scope": "Local prototype correctness; not native desktop or model task benchmarking",
+  "environment": {
+    "os": "Linux",
+    "python": "3.12.14"
+  },
+  "checks": [
+    {
+      "name": "accessibility lifecycle",
+      "passed": 9,
+      "skipped": 0
+    },
+    {
+      "name": "native adapter contracts (doubles)",
+      "passed": 7,
+      "skipped": 0
+    },
+    {
+      "name": "public tool behavior (injected desktop)",
+      "passed": 11,
+      "skipped": 0
+    },
+    {
+      "name": "input validation",
+      "passed": 2,
+      "skipped": 0
+    },
+    {
+      "name": "real stdio initialize/list_tools/error/safe-call",
+      "passed": 1,
+      "skipped": 0,
+      "elapsed_seconds": 0.514,
+      "environment_note": "Sandbox local IPC allowance required; no remote network access used by test."
+    },
+    {
+      "name": "syntax compilation",
+      "status": "PASS"
+    },
+    {
+      "name": "wheel build",
+      "status": "PASS"
+    },
+    {
+      "name": "built wheel install/import/console entry point",
+      "status": "PASS",
+      "dependency_installation": "not attempted; --no-deps on Linux runtime with existing MCP"
+    }
+  ],
+  "windows_desktop": "NOT RUN",
+  "macos_desktop": "NOT RUN",
+  "chatgpt_comparison": "NOT RUN",
+  "implementation_sha256": {
+    "src/claude_computer_use/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/claude_computer_use/accessibility.py": "e67b69bcdd7a9bfdd411cb27e385d1a973824600901452851231a0b6dd49b9ab",
+    "src/claude_computer_use/server.py": "837ed6113a4fa339314ec7ec9e270f86b3a0a52fd27f00f575a48f183de73509",
+    "src/claude_computer_use/validation.py": "c6b1b47904140cca18c003cbc5509c33932886898b2e246dfb22531612de4794"
+  }
+}

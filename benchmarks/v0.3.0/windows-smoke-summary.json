@@ -1,0 +1,100 @@
+{
+  "version": "0.3.0",
+  "source_thread": "codex://threads/01a1077d-eaa4-7530-9df0-c1589af308f1",
+  "attribution": "Delegated Windows testing summaries; original report/logs reside in testing thread, not this cloud filesystem.",
+  "native_calculator": {
+    "result": "96",
+    "six_native_actions": "PASS",
+    "stale_ids": "rejected",
+    "target_PrintWindow": "complete"
+  },
+  "packaged_windows_tests": {
+    "total": 62,
+    "errors": 22,
+    "cause_reported": "mock window ID target converted to int in Runtime; local Linux pass did not establish Windows portability"
+  },
+  "unicode": {
+    "expected": "café 日本語 😀\nsecond line\ttab",
+    "observed_DocumentRange": "café     😀\rsecond line\ttab",
+    "cjk": "LOSS OBSERVED",
+    "accent_emoji_newline_tab": "worked in this smoke trial",
+    "clipboard_hash": "unchanged",
+    "root_cause": "NOT ESTABLISHED"
+  },
+  "cursor_focus": {
+    "plugin": "moves shared Windows pointer/focus",
+    "Codex_sky": "moves Windows pointer and switched Notepad focus to Calculator; user confirms",
+    "independent_shared_host_input": "NOT DEMONSTRATED"
+  },
+  "window_mapping": {
+    "local_hover": [
+      250,
+      273
+    ],
+    "target_origin": [
+      1500,
+      90
+    ],
+    "observed_cursor": [
+      1750,
+      363
+    ],
+    "click_without_new_capture": "rejected stale frame",
+    "foreground_mismatch_screenshot_keys_click": "rejected without dispatch"
+  },
+  "settled_geometry": {
+    "settlement_seconds": 0.6,
+    "maximized_visible": [
+      0,
+      0,
+      1920,
+      1032
+    ],
+    "maximized_native": [
+      -8,
+      -8,
+      1936,
+      1048
+    ],
+    "crop": "PASS",
+    "minimized_screenshot": "rejected",
+    "restored_frame": [
+      1500,
+      90,
+      404,
+      628
+    ],
+    "restored_capture": "PASS",
+    "immediate_post_Invoke_frames": "asynchronous transition observations, not invalid minimized capture",
+    "window_selection": "exact enumerated ID; title-only selection became ambiguous"
+  },
+  "activation_refusal": {
+    "observed_once": "(0, SetForegroundWindow, No error message is available)",
+    "scope": "separate from later successful settled restore; no bypass recommended"
+  },
+  "tree": {
+    "depth8_nodes": 61,
+    "depth8_truncated": true,
+    "depth20_nodes": 65,
+    "depth20_truncated": false,
+    "errors": 0
+  },
+  "worker_stall": {
+    "scope": "injected stall in real Runtime worker; not genuinely hung UIA provider or held-input cleanup test",
+    "deadline_seconds": 0.844,
+    "cancel_pending_seconds": 0.034,
+    "task_cancel_seconds": 0.03,
+    "restart_target": null
+  },
+  "not_validated": [
+    "VM isolation",
+    "DPI matrix",
+    "genuine hung app/provider",
+    "release cleanup",
+    "independent input"
+  ],
+  "source_reports": [
+    "revision-results/revision-report.json",
+    "revision-report.json"
+  ]
+}

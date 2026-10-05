@@ -1,0 +1,56 @@
+{
+  "version": "0.3.2",
+  "provenance": "Delegated from testing thread 01a1077d-eaa4-7530-9df0-c1589af308f1; not cloud reproduced",
+  "suite": {
+    "passed": 86,
+    "seconds": 6.901,
+    "errors": 0,
+    "failures": 0,
+    "skips": 0
+  },
+  "installed": {
+    "PySide6": "6.11.2",
+    "pynput": "1.8.2"
+  },
+  "direct_activity_controller": {
+    "native_banner": "Computer use active \u2014 press Esc to stop",
+    "halo_pixels": [
+      64,
+      64
+    ],
+    "evidence": "Dedicated PrintWindow capture plus visible EnumWindows entries",
+    "computer_status_seconds_approx": 0.996
+  },
+  "full_stdio_mcp": {
+    "status": "UNRESOLVED",
+    "observed": "Repeated 8-second native-worker deadlines for status and bind; no Esc-latch success inferred"
+  },
+  "physical_escape_local_resume": "PENDING",
+  "discovery_note": "Codex sky.list_windows excludes these tool/overlay windows; absence there is not absence of UI",
+  "known_gap": "v0.3.2 wait(.01) succeeds after stop; fixed in v0.3.3 with entry/pending/generation regression checks",
+  "injected_escape_runtime_stall": {
+    "cancel_seconds_approx": 0.122,
+    "stopped": true,
+    "acknowledged": true,
+    "worker_cleared": true,
+    "subsequent_calls_rejected": [
+      "computer_status",
+      "list_windows",
+      "bind_window",
+      "press_keys"
+    ],
+    "scope": "Injected stall in real Runtime worker through direct interactive harness; not genuine hung provider or full MCP acceptance"
+  },
+  "companion_termination": {
+    "computer_status_blocked": true
+  },
+  "halo_native_positions": "Follows QCursor per native positions",
+  "local_human_resume": "PENDING human button click",
+  "remaining_unvalidated": [
+    "Physical Escape during real paced typing",
+    "Repeated resume cycles",
+    "Focus/click pass-through",
+    "DPI/multimonitor",
+    "Full stdio MCP status/bind deadlines"
+  ]
+}
