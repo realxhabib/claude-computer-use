@@ -1,9 +1,11 @@
-# Computer use for Claude Code — v0.3.9
+# Computer use for Claude Code — v0.3.10
 
-A desktop MCP server and Claude Code skill for Windows and macOS. v0.3.2 requires
-explicit target-window binding, captures target-window pixels, and runs native
-operations in a killable worker. This is a prototype with partially smoke-tested Windows v0.3 and unverified v0.3.2 native
-behavior, not a measured ChatGPT/Codex equivalent. Current Windows builds temporarily enlarge the normal native arrow while active; macOS uses its native pointer plus glow.
+A Claude Code plugin for controlling desktop apps, with a bundled local MCP
+server and automatic Python dependency setup. Windows v0.3.9 has delegated native
+smoke evidence; the v0.3.10 marketplace installation needs real-host testing.
+macOS operation is not native-certified. This is not a measured ChatGPT/Codex
+equivalent. Windows temporarily enlarges the normal native arrow while active;
+macOS uses its native pointer plus glow.
 
 ## Which desktop does it control?
 
@@ -20,39 +22,76 @@ transport for that setup; it does not create a VM or prove isolation. See
 work without moving a cursor, but this version still guards foreground state;
 it does not promise background operation on your host's existing apps.
 
-## Install locally
+## Install in Claude Code
 
-Use Windows 10/11 or a current Mac, Python 3.10+, and Claude Code. From the source:
+Use current Claude Code on an unlocked Windows 10/11 desktop or a Mac. This is
+an experimental Windows beta; macOS native acceptance is still pending.
 
-```sh
-python -m venv .venv
-```
-
-macOS:
-
-```sh
-.venv/bin/python -m pip install -e .
-claude mcp add --transport stdio local-computer -- /ABSOLUTE/PATH/claude-computer-use/.venv/bin/claude-computer-use
-claude --plugin-dir /ABSOLUTE/PATH/claude-computer-use
-```
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) once if you
+don't already have it. You do **not** need to install Python separately.
 
 Windows PowerShell:
 
 ```powershell
-.venv\Scripts\python.exe -m pip install -e .
-claude mcp add --transport stdio local-computer -- C:\ABSOLUTE\PATH\claude-computer-use\.venv\Scripts\claude-computer-use.exe
-claude --plugin-dir C:\ABSOLUTE\PATH\claude-computer-use
+winget install --id astral-sh.uv --exact
 ```
 
-Replace absolute paths. Re-run install and restart Claude Code when upgrading.
-Use `claude --help` / `claude mcp add --help` to check your installed CLI syntax.
-The skill is loaded as a plugin; its MCP server is registered separately. Your
-Claude Code authentication supplies the model; no additional model API key is used.
+macOS with Homebrew:
 
-macOS: grant Accessibility and Screen Recording to the actual launcher/runtime
-in System Settings → Privacy & Security and restart it as needed. Windows:
-use an unlocked interactive user desktop, not a service/session-0 process.
-An SSH-created Windows service session may not have access to the user's GUI.
+```sh
+brew install uv
+```
+
+Restart your terminal and Claude Code after installing uv so they see it on PATH.
+Then run these commands **inside Claude Code**:
+
+```text
+/plugin marketplace add realxhabib/claude-computer-use
+/plugin install computer-use@realxhabib-computer-use
+```
+
+Restart Claude Code when prompted. The plugin registers its own `local-computer`
+MCP server. `uv` downloads Python 3.12 if needed and installs the locked dependencies
+in the plugin's data directory automatically. No cloning, virtual-environment
+commands, manual MCP registration, or extra model API key is needed. First setup
+requires internet access and can take several minutes, especially for the UI
+libraries. If the initial connection times out, run `/computer-use:setup` to
+finish dependency setup, then reconnect the plugin server through `/mcp`.
+
+macOS: grant Accessibility, Screen Recording, and Input Monitoring to the actual
+launcher/runtime in System Settings → Privacy & Security. Restart as needed.
+Windows: run Claude Code on your interactive desktop, not a service, SSH service
+session, or WSL. The server controls the desktop on which it runs.
+
+If you previously registered the standalone server, remove that old registration
+first with `claude mcp remove local-computer` in your terminal (use the same scope
+as your old registration). Otherwise two servers can compete for cursor ownership.
+
+### Try it
+
+Ask Claude: “Use computer-use to select my open Calculator, calculate 12 × 8,
+and verify the result.” The active server displays the banner and larger Windows
+arrow. Press **Esc** or click **Esc to cancel** to end computer use, restore the
+cursor, and remove the indicator. Claude Code stays open. Only reconnect through
+`/mcp` when you explicitly want a new computer-use session. Host-driven reconnect
+behavior still needs native Claude Code acceptance testing.
+
+### Updates and removal
+
+Use `/plugin` to update or uninstall `computer-use@realxhabib-computer-use`.
+End active computer use with Esc before changing the installation. Dependency
+versions are in `uv.lock`; each plugin release uses a versioned runtime directory.
+The data directory is managed by Claude Code; older runtime directories may stay
+until uninstall. The uv download cache is separate and can be cleared with
+`uv cache clean` after closing running servers.
+
+### Development installation
+
+Clone the repository, install uv, and run `claude --plugin-dir /absolute/path/to/claude-computer-use`.
+The bundled MCP configuration works for local plugin development too. To prepare
+an environment for tests without starting desktop control, run `uv sync --python 3.12 --frozen`.
+The console entry point remains available for standalone and VM deployments;
+see [ISOLATED_DESKTOP.md](ISOLATED_DESKTOP.md).
 
 ## Target selection and recovery
 

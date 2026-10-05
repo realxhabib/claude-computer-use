@@ -1,0 +1,14 @@
+{
+  "name": "realxhabib-computer-use",
+  "owner": {
+    "name": "realxhabib"
+  },
+  "plugins": [
+    {
+      "name": "computer-use",
+      "source": "./",
+      "description": "Local desktop control for Claude Code. Experimental Windows support; macOS validation pending."
+    }
+  ],
+  "description": "Experimental local desktop control for Claude Code"
+}

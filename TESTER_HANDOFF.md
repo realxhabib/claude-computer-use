@@ -18,6 +18,23 @@ separate modes and do not claim independence from target-window guards:
    ISOLATED_DESKTOP.md. Provisioning a VM is not bundled; determine existing VM
    availability before making host configuration changes.
 
+## v0.3.10 marketplace install acceptance (current)
+
+Install uv and restart Claude Code so PATH is refreshed. Use the GitHub marketplace
+flow in README, not an editable venv or separate `claude mcp add` registration.
+The bundled launcher uses Python 3.12 and uv.lock; prior Python 3.14/other dependency
+results do not certify this combination. Remove only the previous standalone
+registration to avoid competing cursor owners.
+
+Record Claude Code/uv versions, cold dependency setup duration and any MCP startup
+timeout. If necessary, invoke `/computer-use:setup`, wait for completion and use
+`/mcp` to reconnect explicitly. Verify the installed skill and bundled tools,
+Calculator 96, target-scoped screenshot, and physical Esc terminal exit. Observe
+whether Claude reconnects after Esc; it must not resume work without a new request.
+Test paths containing spaces, restart/warm launch and plugin upgrade. macOS needs
+its own permissions/input/capture/stop run. Linux packaging checks certify none of
+these native behaviors.
+
 ## First Windows checks
 
 - Verify revised ZIP SHA/version, create isolated venv; install dependencies,

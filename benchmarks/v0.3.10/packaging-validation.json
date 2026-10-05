@@ -1,0 +1,29 @@
+{
+  "version": "0.3.10",
+  "environment": "Linux cloud, Python 3.12.14, Claude Code 2.1.289, uv 0.12.19",
+  "checks": {
+    "claude_plugin_validate": "pass without warnings",
+    "local_marketplace_add_and_install": "pass in isolated CLAUDE_CONFIG_DIR",
+    "fresh_locked_environment_console_help": "pass from unrelated cwd with spaces in environment path",
+    "packaged_tests": {
+      "total": 126,
+      "passed": 123,
+      "skipped": 3,
+      "failures": 0,
+      "errors": 0,
+      "native_skips": [
+        "desktop stdio MCP",
+        "desktop HTTP MCP",
+        "Windows inherited pipe"
+      ]
+    },
+    "critic": "local packaging pass"
+  },
+  "limitations": [
+    "No Windows or macOS marketplace install acceptance yet",
+    "No desktop GUI launched in these checks",
+    "No authenticated Claude model session tested",
+    "Cold Python download and GUI dependencies not exercised on Linux",
+    "Dependency lock and pinned launcher Python differ from prior Windows test environment"
+  ]
+}

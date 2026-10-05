@@ -1,5 +1,9 @@
 {
   "name": "computer-use",
-  "version": "0.3.9",
-  "description": "Screenshot-driven local desktop operation for Windows and macOS."
+  "version": "0.3.10",
+  "description": "Local desktop control for Claude Code. Experimental Windows support; macOS validation pending.",
+  "repository": "https://github.com/realxhabib/claude-computer-use",
+  "author": {
+    "name": "realxhabib"
+  }
 }

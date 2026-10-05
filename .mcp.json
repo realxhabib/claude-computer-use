@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "local-computer": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--project",
+        "${CLAUDE_PLUGIN_ROOT}",
+        "--python",
+        "3.12",
+        "--frozen",
+        "--no-editable",
+        "claude-computer-use"
+      ],
+      "env": {
+        "UV_PROJECT_ENVIRONMENT": "${CLAUDE_PLUGIN_DATA}/runtime-v0.3.10",
+        "UV_NO_PROGRESS": "1"
+      }
+    }
+  }
+}
