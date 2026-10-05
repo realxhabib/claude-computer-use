@@ -1,0 +1,26 @@
+{
+  "version": "0.4.1",
+  "scope": "diagnostic-only indicator startup reporting",
+  "reported_issue": "User reports start_computer_use failed twice on Windows with generic indicator/Escape unavailable error",
+  "root_cause": "unknown; native full error requested",
+  "tests": {
+    "total": 141,
+    "passed": 139,
+    "skipped": 2,
+    "errors": 0,
+    "failures": 0
+  },
+  "new_checks": [
+    "actual spawned child from async thread forwards phase and ImportError trace",
+    "stalled initializer preserves live state and listener_wait phase before parent kill",
+    "pre-entry failure reports spawn_pending",
+    "trace bounded to 4095 bytes"
+  ],
+  "critic": "PASS limited local diagnostic gate,26 relevant tests independently passed",
+  "limitations": [
+    "Windows reporting not yet natively verified",
+    "No fix to original startup defect claimed",
+    "Native abort/pre-wrapper failure may have no Python traceback",
+    "No listener bypass or readiness deadline change"
+  ]
+}

@@ -5,16 +5,23 @@ import threading
 import sys
 import os
 from .diagnostics import checkpoint
+from .startup_status import StartupStatus, run_startup_target
 
 
-def overlay_main(ready, stopped, acknowledged, shutdown, lock, cursor_epoch, cursor_state_lock):
+def overlay_main(ready, stopped, acknowledged, shutdown, lock, cursor_epoch, cursor_state_lock, startup_status=None):
+    def phase(name):
+        if startup_status is not None:startup_status.phase(name)
+        checkpoint('activity.startup.' + name)
+    phase('qt_import')
     # Qt must own this process's main thread. Never put UI in the killable worker.
     from PySide6.QtCore import Qt, QTimer
     from PySide6.QtGui import QColor, QPainter, QCursor, QRadialGradient
     from PySide6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QHBoxLayout, QGraphicsDropShadowEffect
     from .activity_style import (BANNER_WIDTH, BANNER_HEIGHT, CURSOR_SIZE, CURSOR_HOTSPOT,
                                  ACTIVE_TEXT, CANCEL_TEXT, banner_position)
+    phase('keyboard_import')
     from pynput import keyboard
+    phase('qt_application')
     app = QApplication([])
     class Halo(QWidget):
         def __init__(self):
@@ -63,10 +70,15 @@ def overlay_main(ready, stopped, acknowledged, shutdown, lock, cursor_epoch, cur
         if key==keyboard.Key.esc:
             checkpoint('activity.escape_received')
             stop_locally("escape")
+    phase('listener_construct')
     listener=keyboard.Listener(on_press=key_press)
     if not getattr(listener, "IS_TRUSTED", True):
         raise RuntimeError("Global Escape listener needs macOS Input Monitoring permission")
-    listener.start();listener.wait()
+    phase('listener_start')
+    listener.start()
+    phase('listener_wait')
+    listener.wait()
+    phase('banner_show')
     banner.show()
     def tick():
         if shutdown.is_set(): listener.stop();app.quit();return
@@ -84,7 +96,7 @@ def overlay_main(ready, stopped, acknowledged, shutdown, lock, cursor_epoch, cur
             banner.move(bx-12,by-12)
         if not paused:
             halo.move(pos.x()-CURSOR_HOTSPOT[0],pos.y()-CURSOR_HOTSPOT[1])
-    timer=QTimer();timer.timeout.connect(tick);timer.start(20);tick();ready.set()
+    timer=QTimer();timer.timeout.connect(tick);timer.start(20);tick();phase('ready');ready.set()
     app.exec()
 
 
@@ -96,10 +108,17 @@ class Activity:
         if sys.platform not in {'win32','darwin'}:raise RuntimeError('Desktop indicator requires Windows or macOS')
         ctx=multiprocessing.get_context('spawn')
         self.ready=ProcessSignal(ctx);self.stopped=ProcessSignal(ctx);self.acknowledged=ProcessSignal(ctx);self.shutdown=ProcessSignal(ctx);self.lock=BoundedProcessLock(ctx);self.cursor_epoch=ctx.RawValue("q",0);self.cursor_state_lock=BoundedProcessLock(ctx)
-        self.process=ctx.Process(target=overlay_main,args=(self.ready,self.stopped,self.acknowledged,self.shutdown,self.lock,self.cursor_epoch,self.cursor_state_lock),daemon=True)
+        self.startup_status=StartupStatus(ctx)
+        overlay_args=(self.ready,self.stopped,self.acknowledged,self.shutdown,self.lock,self.cursor_epoch,self.cursor_state_lock)
+        self.process=ctx.Process(target=run_startup_target,args=(self.startup_status,overlay_main,overlay_args),daemon=True)
         self.process.start()
         if not wait_for_process_ready(self.ready,self.process):
-            self.close();raise RuntimeError('Activity indicator/Escape listener unavailable. Check desktop and macOS Input Monitoring permissions.')
+            detail=self.startup_status.describe(self.process)
+            self.close()
+            guidance=('Check that Claude Code runs on your unlocked Windows desktop, not WSL or a service.'
+                      if sys.platform=='win32' else
+                      'Check Accessibility and Input Monitoring permissions for the launcher/runtime.')
+            raise RuntimeError('Activity startup failed: ' + detail + '\n' + guidance)
         if sys.platform=='win32':
             from .native_cursor import NativeCursorGuard
             try:self.cursor_guard=NativeCursorGuard(self.process.pid,self.stopped,self.cursor_epoch,self.cursor_state_lock)

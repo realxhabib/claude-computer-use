@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "claude-computer-use-local"
-version = "0.4.0"
+version = "0.4.1"
 description = "Local desktop controls for Claude Code on Windows and macOS"
 requires-python = ">=3.10"
 dependencies = ["mcp>=1.12,<2", "PyAutoGUI>=0.9.54,<1", "Pillow>=10,<13", "psutil>=5.9,<8", "PySide6>=6.6,<7; sys_platform == 'win32' or sys_platform == 'darwin'", "pynput>=1.7,<2; sys_platform == 'win32' or sys_platform == 'darwin'",

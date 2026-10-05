@@ -1,4 +1,4 @@
-# Computer use for Claude Code — v0.4.0
+# Computer use for Claude Code — v0.4.1
 
 A Claude Code plugin for controlling desktop apps, with a bundled local MCP
 server and automatic Python dependency setup. Windows v0.3.9 has delegated native
@@ -85,6 +85,17 @@ independent check that a human authorized restart; the skill instructs Claude to
 wait for that new request. There is no Resume button. `computer_session_status` reports
 idle/active/user_stopped/error without turning on desktop control. A failed
 cleanup blocks new sessions until `end_computer_use` successfully retries it.
+
+### If starting desktop control fails
+
+v0.4.1 reports the indicator child's startup phase, PID and exit code instead of
+assuming every readiness failure is an Escape permission problem. Python errors
+inside the child include a bounded traceback. A native abort or failure before
+the reporting wrapper starts may provide only phase/exit code. Paste the complete
+`Activity startup failed` error when reporting a failure. Do not repeatedly retry
+or disable the global Escape listener. This adds diagnostics for the reported
+v0.4.0 Windows startup failure; it does not establish its cause or a native fix.
+The readiness deadline is unchanged.
 
 ### Updates and removal
 

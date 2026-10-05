@@ -15,7 +15,7 @@ Prepare this computer-use installation without launching the desktop server.
    `uv sync --project "${CLAUDE_PLUGIN_ROOT}" --python 3.12 --frozen --no-editable`
 
    Set the environment variable `UV_PROJECT_ENVIRONMENT` for that command only to
-   `${CLAUDE_PLUGIN_DATA}/runtime-v0.4.0`. This must match the bundled .mcp.json.
+   `${CLAUDE_PLUGIN_DATA}/runtime-v0.4.1`. This must match the bundled .mcp.json.
    Do not sync the environment in the user's working project. Let downloads finish;
    report dependency errors honestly. This command does not start the GUI server.
 3. Tell the user to reconnect the plugin's local-computer server using `/mcp` when
@@ -27,3 +27,10 @@ Prepare this computer-use installation without launching the desktop server.
 macOS needs Accessibility, Screen Recording and Input Monitoring permissions.
 Windows needs an unlocked interactive desktop; WSL/service sessions aren't supported.
 Do not claim this setup verifies native capture, input, cancellation or macOS support.
+
+If `start_computer_use` fails, preserve its complete `Activity startup failed`
+message: phase, child PID, exit code and any traceback. Do not summarize it as a
+macOS permissions issue on Windows. Do not retry repeatedly or disable Esc.
+A failure at `spawn_pending` can precede the reporting wrapper; collect this
+plugin server's stderr from Claude's MCP/debug log in that case. Exclude unrelated
+conversation/tool logs and secrets from any report.

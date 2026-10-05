@@ -13,7 +13,7 @@
         "claude-computer-use"
       ],
       "env": {
-        "UV_PROJECT_ENVIRONMENT": "${CLAUDE_PLUGIN_DATA}/runtime-v0.4.0",
+        "UV_PROJECT_ENVIRONMENT": "${CLAUDE_PLUGIN_DATA}/runtime-v0.4.1",
         "UV_NO_PROGRESS": "1"
       }
     }
