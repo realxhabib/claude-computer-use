@@ -155,10 +155,11 @@ class NativeCursorGuard:
         ctx=multiprocessing.get_context('spawn')
         self.ready=ProcessSignal(ctx);self.restored=ProcessSignal(ctx);self.changed=ProcessSignal(ctx);self.shutdown=ProcessSignal(ctx)
         self.epoch=epoch;self.restored_epoch=ctx.RawValue("q",-1)
-        self.process=ctx.Process(target=cursor_guard_main,args=(self.ready,self.restored,self.restored_epoch,self.epoch,state_lock,self.changed,stopped,self.shutdown,
-            os.getpid(),psutil.Process(os.getpid()).create_time(),companion_pid,psutil.Process(companion_pid).create_time()),daemon=True)
-        self.process.start()
-        if not wait_for_process_ready(self.ready,self.process):
+        from .companion_launch import start_companion
+        deadline=time.monotonic()+10
+        self.process=start_companion(ctx,cursor_guard_main,(self.ready,self.restored,self.restored_epoch,self.epoch,state_lock,self.changed,stopped,self.shutdown,
+            os.getpid(),psutil.Process(os.getpid()).create_time(),companion_pid,psutil.Process(companion_pid).create_time()),timeout=10,shutdown=self.shutdown,restores_cursor=True)
+        if not wait_for_process_ready(self.ready,self.process,max(0,deadline-time.monotonic())):
             self.close();raise RuntimeError('Native cursor guard could not initialize; another session may own the cursor')
     def check(self):
         if not self.process.is_alive():raise RuntimeError('Native cursor guard exited; restart computer use')
@@ -181,7 +182,9 @@ class NativeCursorGuard:
             finally:api.release()
     def close(self):
         self.shutdown.set();self.process.join(1)
-        if self.process.is_alive():
+        if self.process.is_alive() and getattr(self.process,"owns_process_tree",False) is True:
+            self.process.kill();self.process.join(1)
+        elif self.process.is_alive():
             import psutil
             try:
                 root=psutil.Process(self.process.pid);root.suspend()

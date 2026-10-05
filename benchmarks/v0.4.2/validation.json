@@ -1,0 +1,32 @@
+{
+  "version": "0.4.2",
+  "change": "Dedicated private-pipe Windows companion bootstrap for indicator and native cursor guard",
+  "reported_evidence": {
+    "version": "0.4.1",
+    "failed_starts": 2,
+    "last_phase": "spawn_pending",
+    "interactive_windows_session": 1,
+    "helpers_survived_cleanup": false,
+    "root_cause": "Not proven; target wrapper never entered before readiness deadline"
+  },
+  "tests": {
+    "total": 151,
+    "passed": 148,
+    "skipped": 3,
+    "failures": 0,
+    "errors": 0,
+    "skips": [
+      "native desktop MCP task cycles",
+      "Windows worker private pipe",
+      "Windows companion shared flags/raw value/semaphore transfer"
+    ]
+  },
+  "critic": "PASS local candidate gate: 44 relevant passed,1native skip",
+  "limitations": [
+    "No native Windows startup success claimed for revision",
+    "Windows CPython shared-handle transfer remains unverified",
+    "Parent-death cursor restoration needs native regression",
+    "Synchronous process creation/serialization/pipe-send not independently preempted; handshake plus readiness retain10s budget",
+    "macOS retains existing spawn implementation"
+  ]
+}

@@ -18,6 +18,24 @@ separate modes and do not claim independence from target-window guards:
    ISOLATED_DESKTOP.md. Provisioning a VM is not bundled; determine existing VM
    availability before making host configuration changes.
 
+## v0.4.2 Windows startup regression (current)
+
+v0.4.1 user report: two starts expire at `spawn_pending`, interactive Windows
+session1, no lock evidence, failed helper PIDs24992/12876 no longer alive after
+cleanup. The wrapper never ran; the root cause is not established. Do not attribute
+the failure to Defender or listener permissions without evidence.
+
+The candidate change launches indicator and cursor guard via a dedicated private
+pipe entry rather than generic multiprocessing bootstrap. First run
+`python -m unittest discover -s tests -p test_companion_launch.py -v` in the plugin's
+managed Windows Python environment: the native test must actually run, not skip.
+It transfers shared flags/raw PID value/a semaphore from an asyncio startup thread.
+Then test actual Claude plugin start/Calculator/end/start and physical Esc. Record
+full new error if it fails (private handshake versus later readiness phase), PID
+ownership, original cursor restoration, and no leftover launcher/interpreter/UI
+processes. Force parent/companion death in a separate controlled probe and verify
+cursor restoration; Linux contract tests do not certify it.
+
 ## v0.4.0 reusable-session acceptance (current)
 
 Update the marketplace/plugin and restart Claude Code once to load the new server.

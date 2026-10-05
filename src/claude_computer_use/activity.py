@@ -6,6 +6,8 @@ import sys
 import os
 from .diagnostics import checkpoint
 from .startup_status import StartupStatus, run_startup_target
+from .companion_launch import start_companion
+import time
 
 
 def overlay_main(ready, stopped, acknowledged, shutdown, lock, cursor_epoch, cursor_state_lock, startup_status=None):
@@ -110,9 +112,9 @@ class Activity:
         self.ready=ProcessSignal(ctx);self.stopped=ProcessSignal(ctx);self.acknowledged=ProcessSignal(ctx);self.shutdown=ProcessSignal(ctx);self.lock=BoundedProcessLock(ctx);self.cursor_epoch=ctx.RawValue("q",0);self.cursor_state_lock=BoundedProcessLock(ctx)
         self.startup_status=StartupStatus(ctx)
         overlay_args=(self.ready,self.stopped,self.acknowledged,self.shutdown,self.lock,self.cursor_epoch,self.cursor_state_lock)
-        self.process=ctx.Process(target=run_startup_target,args=(self.startup_status,overlay_main,overlay_args),daemon=True)
-        self.process.start()
-        if not wait_for_process_ready(self.ready,self.process):
+        deadline=time.monotonic()+10
+        self.process=start_companion(ctx,run_startup_target,(self.startup_status,overlay_main,overlay_args),timeout=10,shutdown=self.shutdown)
+        if not wait_for_process_ready(self.ready,self.process,max(0,deadline-time.monotonic())):
             detail=self.startup_status.describe(self.process)
             self.close()
             guidance=('Check that Claude Code runs on your unlocked Windows desktop, not WSL or a service.'

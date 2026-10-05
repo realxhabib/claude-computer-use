@@ -1,4 +1,4 @@
-# Computer use for Claude Code — v0.4.1
+# Computer use for Claude Code — v0.4.2
 
 A Claude Code plugin for controlling desktop apps, with a bundled local MCP
 server and automatic Python dependency setup. Windows v0.3.9 has delegated native
@@ -329,3 +329,22 @@ still removes the visuals and restores the cursor, but no longer kills MCP.
 A cancellation latch requires a deliberate new user request before restarting.
 This supersedes v0.3.9's transport-exit behavior. Native physical Escape, repeated
 start/end cycles and GUI cleanup under this version remain to be tested.
+
+### v0.4.2 Windows companion bootstrap
+
+The reported v0.4.1 failure was `phase=spawn_pending`: neither failed helper
+entered its target wrapper before the readiness deadline. Interactive session 1
+and no surviving failed helper processes were reported. This does not identify
+a listener, antivirus or desktop-lock problem.
+
+Windows indicator and cursor guard now use a dedicated module and private pipe,
+with no parent MCP main-module reload and no inherited MCP stdin/stdout. Shared
+signals and locks are transferred only after checking that the receiving PID is
+the launched process or its interpreter descendant. This uses CPython's Windows
+multiprocessing reducers; real Windows transfer and GUI acceptance must be tested.
+Mac retains the existing spawn path. Readiness remains ten seconds including the
+private handshake; OS process creation/serialization/pipe send are synchronous
+and not independently preempted. Failed launch cleanup covers the sampled process
+tree. Parent death requests shutdown; the cursor guard keeps its restoration path.
+This is a candidate fix to the measured bootstrap failure, not a native acceptance
+claim. The detailed startup diagnostics remain enabled in tool errors.
